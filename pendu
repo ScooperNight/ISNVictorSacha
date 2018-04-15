@@ -1,2 +1,424 @@
+public class Fenetre extends JFrame implements ActionListener, MouseListener  {
+    
+     public static final String FICHIER = "C:\\Users\\Sacha\\Desktop\\dictionary.txt";
+    
+    private static final String LANCEMENT_FICHIER = "Jouer";
+	private static final String ARRET_FICHIER = "Quitter";
+	public static final String RELANCEMENT = "Voulez vous rejouer ?";
+	// changes the state of the file
+	private int state = 0;
+	// Random genator for word array
+        // Generateur aleatoire pour tableau de mots
+	public Random rGen = new Random();
+	// Char array that houses the random phrases that was converted from the
+	// word array
+	private static char[] randPhrase;
+	// word aray that houses the 20 words from the file
+        // mot du fichier 
+	private static String[] mots;
+	// Char array that houses the user guesses
+        // Lettre que l'utilisateur à entrer
+	private static char[] LettreUtiliser;
+	// counts the number of hangman body parts
+        // conteur des parties du corps 
+	public static int numCorps = 0;
+	// holds the letters that the user guesses
+        // détient les lettres que l'utilisateur devine
+	private static String numGuesses = "";
+	// holds the random word that the word array generates to prevent multiple
+	// calls
+        // détient le mot aléatoire que le tableau tableau génère pour éviter plusieurs appels
+	public static String phrase;
+	// all my panels - mainpanel holds left/right/bottom(keyboard)
+	public static JPanel PanelPrincipal, PanelGauche, PanelDroitr, PanelBas, PanelHaut, BoxBouton;
+   
+   
+  
+    
+     public Fenetre(){
+        
+         
+         
+    this.setTitle("Le pandax");   
+    this.setSize(800, 500);
+    this.setLocationRelativeTo(null);               
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setContentPane(new Panneau());
+    // main panel houses three panels - left, right and bottom(keyboard).
+		PanelPrincipal = new JPanel();
+		PanelPrincipal.setLayout(new GridLayout(3, 0));
+		PanelPrincipal.setBackground(Color.WHITE);
 
-slt
+		PanelDroitr = new JPanel();
+		PanelGauche = new JPanel();
+		PanelGauche.setBackground(Color.WHITE);
+		PanelDroitr.setBackground(Color.WHITE);
+		// add the left/right panel
+		PanelPrincipal.add(PanelGauche);
+		PanelPrincipal.add(PanelDroitr);
+		PanelBas = new JPanel();
+		PanelBas.setLayout(new GridLayout(4, 4));
+		PanelBas.setBackground(Color.GRAY);
+		// add the bottom panel which contains Jbuttons
+		PanelPrincipal.add(PanelBas, BorderLayout.SOUTH);
+
+		PanelHaut = new JPanel();
+		PanelHaut.setBackground(Color.GREEN);
+		// add last panel which houses replay/exit button
+		add(PanelPrincipal);
+		add(PanelHaut, BorderLayout.AFTER_LAST_LINE);
+
+		// set visibility to false until game is over
+		PanelHaut.setVisible(false);
+                createButtons();
+                addMouseListener(this);
+                createMenuBar();
+                replayButtons(PanelHaut);
+                mots = textFile();
+    
+     }
+     
+     public void replayButtons(JPanel PanelHaut) {
+		JButton playAgain = new JButton(RELANCEMENT);
+		playAgain.setSize(80, 80);
+		playAgain.setActionCommand(RELANCEMENT);
+		playAgain.addActionListener(this);
+		JButton exit = new JButton(ARRET_FICHIER);
+		exit.setActionCommand(ARRET_FICHIER);
+		exit.addActionListener(this);
+		exit.setSize(80, 80);
+		PanelHaut.add(playAgain);
+		PanelHaut.add(exit);
+	}
+     
+     public void createMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		// create file menu
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+
+		// add menu items
+		createMenuItem(fileMenu, LANCEMENT_FICHIER);
+		createMenuItem(fileMenu, ARRET_FICHIER);
+
+	}
+	//method creates menu items with action listeners
+	public void createMenuItem(JMenu menu, String itemName) {
+		JMenuItem menuItem = new JMenuItem(itemName);
+		menuItem.addActionListener(this);
+		menu.add(menuItem);
+	}
+     
+     
+public void createButtons() {
+     
+    
+       //On crée un conteneur avec gestion horizontale
+    Box b1 =Box.createHorizontalBox();
+    
+    JButton[] buttons = new JButton[7];
+    String[] letters = { "A", "B", "C", "D", "E", "F", "G",};
+     for (int i = 0; i < buttons.length; i++) {
+    buttons[i] = new JButton(letters[i]);
+    buttons[i].setActionCommand(letters[i]);
+    buttons[i].addActionListener(this);
+    b1.add(buttons[i]);
+    
+    //b1.add(new JButton("b"));
+    //b1.add(new JButton("c"));
+    //b1.add(new JButton("d"));
+    //b1.add(new JButton("e"));
+    //b1.add(new JButton("f"));
+    //b1.add(new JButton("g"));
+     }
+    //Idem
+    Box b2 = Box.createHorizontalBox();
+    
+    JButton[] buttons2 = new JButton[7];
+    String[] letters2 = { "H", "I", "J", "K", "L", "M", "N",};
+     for (int j = 0; j < buttons2.length; j++) {
+    buttons2[j] = new JButton(letters2[j]);
+    buttons2[j].setActionCommand(letters2[j]);
+    buttons2[j].addActionListener(this);
+    b2.add(buttons2[j]);
+     }
+    //b2.add(new JButton("h"));
+    //b2.add(new JButton("i"));
+    //b2.add(new JButton("j"));
+    //b2.add(new JButton("k"));
+    //b2.add(new JButton("l"));
+    //b2.add(new JButton("m"));
+    //b2.add(new JButton("n"));
+    //Idem
+    Box b3 = Box.createHorizontalBox();
+    JButton[] buttons3 = new JButton[7];
+    String[] letters3 = { "O", "P", "Q", "R", "S", "T", "U",};
+     for (int l = 0; l < buttons3.length; l++) {
+    buttons3[l] = new JButton(letters3[l]);
+    buttons3[l].setActionCommand(letters3[l]);
+    buttons3[l].addActionListener(this);
+    b3.add(buttons3[l]);
+    //b3.add(new JButton("o"));
+    //b3.add(new JButton("p"));
+    //b3.add(new JButton("q"));
+    //b3.add(new JButton("r"));
+    //b3.add(new JButton("s"));
+    //b3.add(new JButton("t"));
+    //b3.add(new JButton("u"));
+     }
+    Box b5 = Box.createHorizontalBox();
+    JButton[] buttons4 = new JButton[5];
+    String[] letters4 = { "V", "W", "X", "Y", "Z"};
+    for (int t = 0; t < buttons4.length; t++) {
+    buttons4[t] = new JButton(letters4[t]);
+    buttons4[t].setActionCommand(letters4[t]);
+    buttons4[t].addActionListener(this);
+    
+    b5.add(buttons4[t]);
+    //b5.add(new JButton("v"));
+    //b5.add(new JButton("w"));
+    //b5.add(new JButton("x"));
+    //b5.add(new JButton("y"));
+    //b5.add(new JButton("z"));
+    }
+    //On crée un conteneur avec gestion verticale
+    //Box b4 = Box.createVerticalBox();
+     //JPanel b4 = new JPanel();
+     BoxBouton = new JPanel();
+     
+    //On positionne maintenant ces trois lignes en colonne
+    BoxBouton.setLayout(new BoxLayout(BoxBouton, BoxLayout.PAGE_AXIS));
+    BoxBouton.add(b1);
+    BoxBouton.add(b2);
+    BoxBouton.add(b3);
+    BoxBouton.add(b5);
+    //BoxBouton.setBounds(50,0, 50,0);
+    
+    
+    
+
+    this.getContentPane().add(BoxBouton);
+    
+    this.setVisible(true);
+    //Définition de sa couleur de fond
+           
+  
+    
+    
+     }
+
+public void paint(Graphics g) {
+		super.paint(g);
+
+		// set the font
+		Font font = new Font("Serif", Font.BOLD | Font.ITALIC, 24);
+		g.setFont(font);
+		g.setColor(Color.RED);
+
+		// if user has selected play from menu - start game
+		if (state == 1) {
+
+
+			gameMessages(g);
+			String result = "";
+			for (int i = 0; i < LettreUtiliser.length; i++) {
+
+				result += LettreUtiliser[i] + " ";
+
+
+			}
+			g.drawString(result, 300, 175);
+			g.drawString("GUESSES", 300, 300);
+			g.drawString(numGuesses, 300, 350);
+			System.out.println(randPhrase);
+			// if user misses a letter - display body parts
+
+
+		
+
+			}
+		}
+
+private void gameMessages(Graphics g) {
+
+		if (!winner()) {
+			// draw welcome message
+			g.drawString("Let's Play Hang Man!!!", 25, 80);
+			//draw winner message and enable belowpanel
+		} else if (winner() && numCorps < 6) {
+			System.out.println("i hit here");
+			g.drawString("You Won!!", 25, 80);
+			PanelBas.setVisible(false);
+			PanelHaut.setVisible(true);
+
+			//draw lost message and enable belowpanel
+		} else if (numCorps == 6) {
+
+			g.drawString("You Lost!!", 25, 80);
+			PanelBas.setVisible(false);
+			PanelHaut.setVisible(true);
+
+		}
+
+	}
+// generate a random word and return via char array
+	public String getword() {
+		mots = textFile();
+
+		int n = mots.length;
+		int r = rGen.nextInt(n);
+		String word = mots[r];
+
+		return word;
+	}
+
+	// method determines whether guesses array match the randphrase array 
+	public boolean winner() {
+		if (Arrays.equals(LettreUtiliser, randPhrase)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+        public String[] textFile() {
+		// create a bufferedReader
+		BufferedReader reader = null;
+		// create a list array and store the values from the text file
+		List<String> wordList = new ArrayList<String>();
+		try {
+			reader = new BufferedReader(new FileReader(FICHIER));
+			String s = null;
+
+			while ((s = reader.readLine()) != null) {
+
+				wordList.add(s);
+
+			}
+
+		} catch (IOException e) {
+
+			System.out.println(e.getMessage());
+			System.exit(-1);
+		} finally {
+			try {
+				// close the file
+				reader.close();
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+				System.exit(-1);
+			}
+		}
+		// convert from arraylist to array and return
+		return wordList.toArray(new String[wordList.size()]);
+
+	}
+
+	public void actionPerformed(ActionEvent e) {
+
+		String command = e.getActionCommand();
+
+	 if (command.equals(LANCEMENT_FICHIER)) {
+			// once the user has pressed play, change state and call to play
+			// method
+			state = 1;
+			play();
+
+			repaint();
+
+		}
+
+	 else if (command.length() == 1 && state == 1) {
+			// pass action event to letters if the user has pressed play and the
+			// event is generated
+			// by the Jbutton array (length of the string is one)
+			letters(command);
+		}
+		//reset status and replay game
+		else if (command.equals(RELANCEMENT)) {
+
+			numCorps = 0;
+			numGuesses = "";
+			PanelBas.setVisible(true);
+			state = 1;
+			play();
+			repaint();		
+
+		} else if (command.equals(ARRET_FICHIER)) {
+			state = 2;
+			System.exit(-1);
+		}
+
+		// repaint();
+	}
+
+	// method receives actionevent from JButtons and compares it to randphrase
+	// array
+	public void letters(String command) {
+
+		System.out.println(command);
+
+		if (phrase.contains(command.toLowerCase())) {
+			for (int i = 0; i < randPhrase.length; i++) {
+				if (command.toLowerCase().charAt(0) == randPhrase[i]) {
+					LettreUtiliser[i] = command.toLowerCase().charAt(0);
+
+				}
+
+			}
+			// if letter does not match - bodycounter increases
+		} else if (!phrase.contains(command.toLowerCase())) {
+			JOptionPane.showMessageDialog(null, "Sorry " + command
+					+ " is not part of the word");
+			numCorps++;
+		}
+
+		// concatenation user guesses
+		numGuesses += command;
+		if (numCorps < 6 && !winner()) {
+			numGuesses += ",";
+		}
+		repaint();
+	}
+
+	// method generates the '_' on the guesses array so it's display to the user
+	private void play() {
+
+		// store random word
+		phrase = getword();
+		// convert random word to char array
+		randPhrase = phrase.toCharArray();
+		//create an array to hold and display user input
+		LettreUtiliser = new char[randPhrase.length];
+		//populate the array with dashes first
+		for (int i = 0; i < LettreUtiliser.length; i++) {
+			LettreUtiliser[i] = '_';
+			}
+
+	}
+
+   public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+	}
+
+	public void mouseReleased(MouseEvent e) {
+	}
+      
+        
+        
+    public static void main(String[] args){
+    Fenetre fen = new Fenetre();
+    
+    
+  }}
+   
