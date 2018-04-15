@@ -6,31 +6,35 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener  {
 	private static final String ARRET_FICHIER = "Quitter";
 	public static final String RELANCEMENT = "Voulez vous rejouer ?";
 	// changes the state of the file
+	// change le statut du fichier
 	private int state = 0;
-	// Random genator for word array
+	
         // Generateur aleatoire pour tableau de mots
 	public Random rGen = new Random();
 	// Char array that houses the random phrases that was converted from the
 	// word array
+	// Tableau de caractères qui garde des phrases aléatoires qui ont été converties par le tableau de mots.
+	
 	private static char[] randPhrase;
-	// word aray that houses the 20 words from the file
-        // mot du fichier 
+	
+        // tableau de mots qui garde les mots du fichier 
+	
 	private static String[] mots;
 	// Char array that houses the user guesses
-        // Lettre que l'utilisateur à entrer
+        // Lettre que l'utilisateur a entré
 	private static char[] LettreUtiliser;
 	// counts the number of hangman body parts
-        // conteur des parties du corps 
+        // compte le nombre de parties du corps 
 	public static int numCorps = 0;
-	// holds the letters that the user guesses
+	
         // détient les lettres que l'utilisateur devine
 	private static String numGuesses = "";
 	// holds the random word that the word array generates to prevent multiple
 	// calls
-        // détient le mot aléatoire que le tableau tableau génère pour éviter plusieurs appels
+        // détient le mot aléatoire que le tableau génère pour éviter plusieurs demandes
 	public static String phrase;
 	// all my panels - mainpanel holds left/right/bottom(keyboard)
-	public static JPanel PanelPrincipal, PanelGauche, PanelDroitr, PanelBas, PanelHaut, BoxBouton;
+	public static JPanel PanelPrincipal, PanelGauche, PanelDroite, PanelBas, PanelHaut, BoxBouton;
    
    
   
@@ -44,31 +48,36 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener  {
     this.setLocationRelativeTo(null);               
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setContentPane(new Panneau());
-    // main panel houses three panels - left, right and bottom(keyboard).
+    
+    // Panel principal qui garde les 3 panels (gauche / droite / en bas(clavier))
 		PanelPrincipal = new JPanel();
 		PanelPrincipal.setLayout(new GridLayout(3, 0));
 		PanelPrincipal.setBackground(Color.WHITE);
 
-		PanelDroitr = new JPanel();
+		PanelDroite = new JPanel();
 		PanelGauche = new JPanel();
 		PanelGauche.setBackground(Color.WHITE);
-		PanelDroitr.setBackground(Color.WHITE);
-		// add the left/right panel
+		PanelDroite.setBackground(Color.WHITE);
+		
+		// Ajoute les panels de gauche et de droite
 		PanelPrincipal.add(PanelGauche);
-		PanelPrincipal.add(PanelDroitr);
+		PanelPrincipal.add(PanelDroite);
 		PanelBas = new JPanel();
 		PanelBas.setLayout(new GridLayout(4, 4));
 		PanelBas.setBackground(Color.GRAY);
-		// add the bottom panel which contains Jbuttons
+		
+		// Ajoute le panel du bas qui contient Jbuttons
 		PanelPrincipal.add(PanelBas, BorderLayout.SOUTH);
 
 		PanelHaut = new JPanel();
 		PanelHaut.setBackground(Color.GREEN);
-		// add last panel which houses replay/exit button
+	
+		// Ajoute le dernier panel qui contient les boutons "rejouer" et "quitter"
 		add(PanelPrincipal);
 		add(PanelHaut, BorderLayout.AFTER_LAST_LINE);
 
 		// set visibility to false until game is over
+		// Cache le mot tant que la partie n'est pas finie
 		PanelHaut.setVisible(false);
                 createButtons();
                 addMouseListener(this);
@@ -96,15 +105,18 @@ public class Fenetre extends JFrame implements ActionListener, MouseListener  {
 		setJMenuBar(menuBar);
 
 		// create file menu
+		// Créer le fichier du menu
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 
 		// add menu items
+		// Ajoute les objets du menu
 		createMenuItem(fileMenu, LANCEMENT_FICHIER);
 		createMenuItem(fileMenu, ARRET_FICHIER);
 
 	}
 	//method creates menu items with action listeners
+	// Méthode qui crée les objets du menu avec les "actionlisteners"
 	public void createMenuItem(JMenu menu, String itemName) {
 		JMenuItem menuItem = new JMenuItem(itemName);
 		menuItem.addActionListener(this);
@@ -212,12 +224,14 @@ public void createButtons() {
 public void paint(Graphics g) {
 		super.paint(g);
 
-		// set the font
+		
+		// met en place la police de caractère
 		Font font = new Font("Serif", Font.BOLD | Font.ITALIC, 24);
 		g.setFont(font);
 		g.setColor(Color.RED);
 
-		// if user has selected play from menu - start game
+		
+		// Si l'utilisateur a cliqué sur "jouer", lance le jeu
 		if (state == 1) {
 
 
@@ -245,18 +259,22 @@ private void gameMessages(Graphics g) {
 
 		if (!winner()) {
 			// draw welcome message
-			g.drawString("Let's Play Hang Man!!!", 25, 80);
+			// dessine un message de bienvenue
+			g.drawString("Jouer au pendu !", 25, 80);
 			//draw winner message and enable belowpanel
+// dessine le message de bienvenue et active belowpanel
 		} else if (winner() && numCorps < 6) {
 			System.out.println("i hit here");
-			g.drawString("You Won!!", 25, 80);
+			// j'ai tapé ici ???
+			g.drawString("Tu as gagné", 25, 80);
 			PanelBas.setVisible(false);
 			PanelHaut.setVisible(true);
 
 			//draw lost message and enable belowpanel
+			// Dessine le message de défaite et active belowpanel
 		} else if (numCorps == 6) {
 
-			g.drawString("You Lost!!", 25, 80);
+			g.drawString("Tu as perdu !", 25, 80);
 			PanelBas.setVisible(false);
 			PanelHaut.setVisible(true);
 
@@ -264,6 +282,7 @@ private void gameMessages(Graphics g) {
 
 	}
 // generate a random word and return via char array
+// génère un mot au hasard et recommence via un tableau de caractère
 	public String getword() {
 		mots = textFile();
 
@@ -275,6 +294,7 @@ private void gameMessages(Graphics g) {
 	}
 
 	// method determines whether guesses array match the randphrase array 
+	// méthode qui détermine si les suppositions du tableau correspondent au tableau randphrase 
 	public boolean winner() {
 		if (Arrays.equals(LettreUtiliser, randPhrase)) {
 			return true;
@@ -285,8 +305,10 @@ private void gameMessages(Graphics g) {
 	}
         public String[] textFile() {
 		// create a bufferedReader
+		// Créer un bufferReader
 		BufferedReader reader = null;
 		// create a list array and store the values from the text file
+		// Créer un tableau et récupère les mots du fichier texte
 		List<String> wordList = new ArrayList<String>();
 		try {
 			reader = new BufferedReader(new FileReader(FICHIER));
@@ -305,6 +327,7 @@ private void gameMessages(Graphics g) {
 		} finally {
 			try {
 				// close the file
+				// ferme le fichier
 				reader.close();
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
@@ -323,6 +346,7 @@ private void gameMessages(Graphics g) {
 	 if (command.equals(LANCEMENT_FICHIER)) {
 			// once the user has pressed play, change state and call to play
 			// method
+			// Une fois que l'utilisateur a cliqué sur "jouer", change le statut et envoie une demande pour lancer method
 			state = 1;
 			play();
 
@@ -334,9 +358,12 @@ private void gameMessages(Graphics g) {
 			// pass action event to letters if the user has pressed play and the
 			// event is generated
 			// by the Jbutton array (length of the string is one)
+			// Passe l'action de l'évènement aux lettres si l'utilisateur a cliqué sur "jouer" 
+			// et que l'évènement est généré par le tableau Jbutton
 			letters(command);
 		}
 		//reset status and replay game
+		// réinitialise le statut et relance le jeu
 		else if (command.equals(RELANCEMENT)) {
 
 			numCorps = 0;
@@ -356,6 +383,7 @@ private void gameMessages(Graphics g) {
 
 	// method receives actionevent from JButtons and compares it to randphrase
 	// array
+	// method recoit actionevent de Jbuttons et le compare eu tableau randphrase
 	public void letters(String command) {
 
 		System.out.println(command);
@@ -369,13 +397,15 @@ private void gameMessages(Graphics g) {
 
 			}
 			// if letter does not match - bodycounter increases
+			// Si la lettre ne correspond pas, le nombre de parties du corps affichées augmente
 		} else if (!phrase.contains(command.toLowerCase())) {
-			JOptionPane.showMessageDialog(null, "Sorry " + command
-					+ " is not part of the word");
+			JOptionPane.showMessageDialog(null, "Désolé " + command
+					+ " ne fait pas partie du mot");
 			numCorps++;
 		}
 
 		// concatenation user guesses
+		// série de lettres que l'utilisateur suppose 
 		numGuesses += command;
 		if (numCorps < 6 && !winner()) {
 			numGuesses += ",";
@@ -384,15 +414,21 @@ private void gameMessages(Graphics g) {
 	}
 
 	// method generates the '_' on the guesses array so it's display to the user
+	// method qui génère '_' du tableau des suppositions et l'affiche à l'utilisateur
 	private void play() {
 
 		// store random word
+		// Garde un mot au hasard
 		phrase = getword();
 		// convert random word to char array
+		// Converti le mot prit au hasard dans le tableau de caractères
 		randPhrase = phrase.toCharArray();
 		//create an array to hold and display user input
+		// Crée un tableau qui garde et affiche les lettres que propose le joueur
 		LettreUtiliser = new char[randPhrase.length];
 		//populate the array with dashes first
+		// remplit le tableau avec des tirets en premier (aucune lettre encore trouvée)
+		
 		for (int i = 0; i < LettreUtiliser.length; i++) {
 			LettreUtiliser[i] = '_';
 			}
